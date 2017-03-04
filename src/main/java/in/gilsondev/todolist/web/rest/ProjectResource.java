@@ -40,6 +40,7 @@ public class ProjectResource {
     /**
      * Endpoint para retornar o projeto consultado pelo ID
      *
+     * @param id Identificador do Projeto
      * @return Objeto {@link ResponseEntity<Project>} com o projeto encontrado
      */
     @GetMapping(path = "/" + ID_PROJECT)
@@ -56,6 +57,7 @@ public class ProjectResource {
     /**
      * Endpoint para criar um novo projeto
      *
+     * @param project Instância de {@link Project} serializado de um JSON
      * @return Objeto {@link ResponseEntity<Project>} com o projeto cadastrado
      */
     @PostMapping
@@ -66,6 +68,7 @@ public class ProjectResource {
     /**
      * Endpoint para atualizar o projeto selecionado
      *
+     * @param project Instância de {@link Project} serializado de um JSON
      * @return Objeto {@link ResponseEntity} com status 200 de atualizado
      */
     @PutMapping
@@ -76,6 +79,7 @@ public class ProjectResource {
     /**
      * Endpoint para remover o projeto selecionado
      *
+     * @param id Identificador do Projeto
      * @return Objeto {@link ResponseEntity} com status 204 de nenhum conteudo existente
      * para esse tipo de recurso.
      */
