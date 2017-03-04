@@ -42,12 +42,12 @@ public class ProjectResource {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateProject(@RequestBody Project project) {
+    public ResponseEntity updateProject(@RequestBody Project project) {
         return ResponseEntity.ok(projectService.save(project));
     }
 
     @DeleteMapping(path = "/" + ID_PROJECT)
-    public ResponseEntity<?> removeProject(@PathVariable(ID_PROJECT_VARIABLE) Long id) {
+    public ResponseEntity removeProject(@PathVariable(ID_PROJECT_VARIABLE) Long id) {
         projectService.delete(id);
         return ResponseEntity.noContent().build();
     }
