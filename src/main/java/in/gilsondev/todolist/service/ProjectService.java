@@ -25,4 +25,9 @@ public class ProjectService {
     public Optional<Project> findById(Long id) {
         return Optional.of(projectRepository.findOne(id));
     }
+
+    // TODO Create test this
+    public void delete(Long id) {
+        projectRepository.delete(id);
+    }
 }

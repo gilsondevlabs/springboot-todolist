@@ -4,10 +4,7 @@ import in.gilsondev.todolist.domain.Project;
 import in.gilsondev.todolist.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +14,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProjectResource {
 
+    public static final String ID_PROJECT = "{id}";
+
+    private static final String ID_PROJECT_VARIABLE = "id";
+
     final ProjectService projectService;
 
     @GetMapping
@@ -24,8 +25,8 @@ public class ProjectResource {
         return ResponseEntity.ok(projectService.findAll());
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<Project> getProject(@PathVariable("id") Long id) {
+    @GetMapping(path = "/" + ID_PROJECT)
+    public ResponseEntity<Project> getProject(@PathVariable(ID_PROJECT_VARIABLE) Long id) {
         Optional<Project> project = projectService.findById(id);
 
         if(project.isPresent()) {
@@ -33,5 +34,21 @@ public class ProjectResource {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping
+    public ResponseEntity<Project> createProject(@RequestBody Project project) {
+        return ResponseEntity.ok(projectService.save(project));
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateProject(@RequestBody Project project) {
+        return ResponseEntity.ok(projectService.save(project));
+    }
+
+    @DeleteMapping(path = "/" + ID_PROJECT)
+    public ResponseEntity<?> removeProject(@PathVariable(ID_PROJECT_VARIABLE) Long id) {
+        projectService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
