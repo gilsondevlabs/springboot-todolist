@@ -1,0 +1,10 @@
+# Arquivos temporarios e dependencias
+.idea
+*.iml
+node_modules
+target
+npm-debug.log
+media
+*.DS_Store
+jenkins
+.mvn
