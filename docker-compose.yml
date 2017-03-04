@@ -3,15 +3,19 @@ services:
   jenkins:
     container_name: todolist-jenkins
     image: jenkins
+    links:
+      - sonar
     ports:
       - "3000:8080"
       - "50000:50000"
     volumes:
-      - "./jenkins:/var/jenkins"
+      - "./jenkins:/var/jenkins_home"
 
   sonar:
       container_name: todolist-sonar
       image: sonarqube:6.1-alpine
+      expose:
+        - "9000"
       ports:
-          - "9000:9000"
-          - "9092:9092"
+        - "9000:9000"
+        - "9092:9092"

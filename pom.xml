@@ -22,24 +22,17 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
-		<jacoco-maven-plugin.version>0.7.7.201606060606</jacoco-maven-plugin.version>
-		<sonar-maven-plugin.version>3.2</sonar-maven-plugin.version>
-		<sonar.issue.ignore.multicriteria>S3437,UndocumentedApi,BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria>
-		<sonar.issue.ignore.multicriteria.S3437.resourceKey>src/main/java/**/*</sonar.issue.ignore.multicriteria.S3437.resourceKey>
 
-		<!-- Rule https://sonarqube.com/coding_rules#rule_key=squid%3AS3437 is ignored, as a JPA-managed field cannot be transient -->
-		<sonar.issue.ignore.multicriteria.S3437.ruleKey>squid:S3437</sonar.issue.ignore.multicriteria.S3437.ruleKey>
-		<sonar.issue.ignore.multicriteria.UndocumentedApi.resourceKey>src/main/java/**/*</sonar.issue.ignore.multicriteria.UndocumentedApi.resourceKey>
-		<!-- Rule http://sonarqube.com/coding_rules#rule_key=squid%3AUndocumentedApi is ignored, as we want to follow "clean code" guidelines and classes, methods and arguments names should be self-explanatory -->
-		<sonar.issue.ignore.multicriteria.UndocumentedApi.ruleKey>squid:UndocumentedApi</sonar.issue.ignore.multicriteria.UndocumentedApi.ruleKey>
+		<jacoco-maven-plugin.version>0.7.7.201606060606</jacoco-maven-plugin.version>
+
+		<sonar-maven-plugin.version>3.2</sonar-maven-plugin.version>
 		<sonar.jacoco.itReportPath>${project.testresult.directory}/coverage/jacoco/jacoco-it.exec</sonar.jacoco.itReportPath>
 		<sonar.jacoco.reportPath>${project.testresult.directory}/coverage/jacoco/jacoco.exec</sonar.jacoco.reportPath>
-
 		<sonar.java.codeCoveragePlugin>jacoco</sonar.java.codeCoveragePlugin>
-
 		<sonar.sources>${project.basedir}/src/main/</sonar.sources>
 		<sonar.surefire.reportsPath>${project.testresult.directory}/surefire-reports</sonar.surefire.reportsPath>
 		<sonar.tests>${project.basedir}/src/test/</sonar.tests>
+
 		<java.version>1.8</java.version>
 	</properties>
 
