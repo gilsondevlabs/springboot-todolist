@@ -5,6 +5,12 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+/**
+ * Entidade que representa os Projetos
+ * no sistema de tarefas
+ *
+ * @author Gilson Filho
+ */
 @Getter
 @Setter
 @Entity
