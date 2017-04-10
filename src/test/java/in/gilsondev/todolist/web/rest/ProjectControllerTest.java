@@ -2,37 +2,37 @@ package in.gilsondev.todolist.web.rest;
 
 import br.com.six2six.fixturefactory.Fixture;
 import in.gilsondev.todolist.common.ControllerTestCase;
-import in.gilsondev.todolist.common.assertions.ProjectAssert;
 import in.gilsondev.todolist.common.builder.ProjectBuilder;
 import in.gilsondev.todolist.domain.Project;
+import in.gilsondev.todolist.exception.TodolistException;
 import in.gilsondev.todolist.service.ProjectService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
+import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebMvcTest(ProjectResource.class)
 public class ProjectControllerTest extends ControllerTestCase<Project> {
     @MockBean
     private ProjectService projectService;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     @Before
     public void setup() {
@@ -41,44 +41,75 @@ public class ProjectControllerTest extends ControllerTestCase<Project> {
     }
 
     @Test
-    public void shouldReturnStatus200InProjectList() {
+    public void shouldReturnProjectList() throws Exception {
         Project project = Fixture.from(Project.class).gimme("valid");
         given(this.projectService.findAll()).willReturn(Collections.singletonList(project));
 
-        ResponseEntity<String> response = this.restTemplate.getForEntity("/project", String.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        this.mockMvc.perform(get("/project")
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andDo(print());
     }
 
     @Test
-    public void shouldReturnProjectList() throws IOException {
-        Project project = Fixture.from(Project.class).gimme("valid");
-        given(this.projectService.findAll()).willReturn(Collections.singletonList(project));
-
-        ResponseEntity<String> response = this.restTemplate.getForEntity("/project", String.class);
-        assertThat(this.json.parseObject(response.getBody())).isNotNull();
-    }
-
-    @Test
-    public void shouldReturnStatus200InProjectDetail() {
+    public void shouldReturnProjectDetail() throws Exception {
         Project project = Fixture.from(Project.class).gimme("valid");
         given(this.projectService.findById(any(Long.class))).willReturn(Optional.of(project));
 
-        ResponseEntity<String> response = this.restTemplate.getForEntity("/project/{id}", String.class, 1L);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        this.mockMvc.perform(get("/project/1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").exists())
+                .andExpect(jsonPath("$.active").exists());
     }
 
     @Test
-    public void shouldReturnProject() {
-        Project project = Fixture.from(Project.class).gimme("valid");
-        given(this.projectService.findById(any(Long.class))).willReturn(Optional.of(project));
+    public void shouldReturnInvalidProjectDetail() throws  Exception {
+        given(this.projectService.findById(any(Long.class))).willThrow(EntityNotFoundException.class);
 
-        ResponseEntity<Project> response = this.restTemplate.getForEntity("/project/{id}", Project.class, 1L);
-        ProjectAssert.assertThat(response.getBody()).isValid();
+        this.mockMvc.perform(get("/project/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorCode").exists())
+                .andExpect(jsonPath("$.message").isEmpty());
     }
 
-    // TODO Test persist project
+    @Test
+    public void shouldPersistProject() throws Exception {
+        Project project = Fixture.from(Project.class).gimme("validWithoutID");
+        Project projectWithId = Fixture.from(Project.class).gimme("valid");
 
-    // TODO Test update project
+        given(projectService.save(any(Project.class))).willReturn(projectWithId);
 
-    // TODO Test delete project
+        this.mockMvc.perform(post("/project/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.json.write(project).getJson())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").isNotEmpty());
+    }
+
+    @Test
+    public void shouldUpdateProject() throws Exception {
+        Project projectWithId = Fixture.from(Project.class).gimme("valid");
+
+        given(projectService.save(any(Project.class))).willReturn(projectWithId);
+
+        this.mockMvc.perform(put("/project/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.json.write(projectWithId).getJson())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldDeleteProject() throws Exception {
+        Project projectWithId = Fixture.from(Project.class).gimme("valid");
+
+        this.mockMvc.perform(delete("/project/" + projectWithId.getId()))
+                .andExpect(status().isNoContent());
+
+        verify(projectService, times(1)).delete(projectWithId.getId());
+    }
 }

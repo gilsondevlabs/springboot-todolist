@@ -5,7 +5,9 @@ import in.gilsondev.todolist.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,7 +64,12 @@ public class ProjectResource {
      */
     @PostMapping
     public ResponseEntity<Project> createProject(@RequestBody Project project) {
-        return ResponseEntity.ok(projectService.save(project));
+        Project projectSaved = projectService.save(project);
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/" + ID_PROJECT)
+                .buildAndExpand(projectSaved.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(projectSaved);
     }
 
     /**

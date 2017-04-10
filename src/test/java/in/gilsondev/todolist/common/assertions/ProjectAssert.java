@@ -5,7 +5,10 @@ import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
 
 /**
- * Custom assertion to Project entity
+ * Asserção customizada para os testes relacionados
+ * a projetos.
+ *
+ * @author Gilson Filho
  */
 public class ProjectAssert extends AbstractAssert<ProjectAssert, Project> {
 
