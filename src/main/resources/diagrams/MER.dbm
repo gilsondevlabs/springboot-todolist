@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.8.2" last-position="1,1" last-zoom="1"
+	 default-schema="public" default-owner="postgres">
+<database name="new_database">
+</database>
+
+<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="todolist" rect-visible="true" fill-color="#e1e1e1">
+	<role name="postgres"/>
+</schema>
+
+<table name="project">
+	<schema name="todolist"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Tabela que armazena os projetos da lista de tarefas]]></comment>
+	<position x="360" y="40"/>
+	<column name="id" not-null="true">
+		<type name="bigint"/>
+		<comment><![CDATA[Identificador único do Projeto]]></comment>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="80"/>
+		<comment><![CDATA[Nome do Projeto]]></comment>
+	</column>
+	<column name="active" not-null="true" default-value="true">
+		<type name="boolean"/>
+		<comment><![CDATA[Define se o projeto está ativo ou não]]></comment>
+	</column>
+	<constraint name="pk_project" type="pk-constr" table="todolist.project">
+		<columns names="id" ref-type="src-columns"/>
+		<comment><![CDATA[Chave primária da tabela de projetos]]></comment>
+	</constraint>
+</table>
+
+<table name="task">
+	<schema name="todolist"/>
+	<role name="postgres"/>
+	<position x="600" y="400"/>
+	<column name="id" not-null="true">
+		<type name="bigint"/>
+		<comment><![CDATA[Identificador único da tarefa]]></comment>
+	</column>
+	<column name="description" not-null="true">
+		<type name="varchar" length="255"/>
+		<comment><![CDATA[Descrição da Tarefa]]></comment>
+	</column>
+	<column name="created_at" not-null="true" default-value="now()">
+		<type name="timestamp"/>
+		<comment><![CDATA[Data em que foi criado a tarefa]]></comment>
+	</column>
+	<column name="completed" not-null="true" default-value="false">
+		<type name="boolean"/>
+		<comment><![CDATA[Define se a tarefa foi finalizada ou não]]></comment>
+	</column>
+	<constraint name="pk_task" type="pk-constr" table="todolist.task">
+		<columns names="id" ref-type="src-columns"/>
+		<comment><![CDATA[Chave primária da tabela de tarefas]]></comment>
+	</constraint>
+</table>
+
+<table name="user">
+	<schema name="todolist"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Tabela que armazena os dados do usuário]]></comment>
+	<position x="20" y="400"/>
+	<column name="id" not-null="true">
+		<type name="bigint"/>
+		<comment><![CDATA[Identificador unico da tabela de usuarios]]></comment>
+	</column>
+	<column name="first_name" not-null="true">
+		<type name="varchar" length="50"/>
+		<comment><![CDATA[Primeiro nome do Usuário]]></comment>
+	</column>
+	<column name="last_name" not-null="true">
+		<type name="varchar" length="50"/>
+		<comment><![CDATA[Sobrenome do Usuário]]></comment>
+	</column>
+	<column name="email" not-null="true">
+		<type name="varchar" length="60"/>
+		<comment><![CDATA[E-mail do usuário]]></comment>
+	</column>
+	<column name="passsword" not-null="true">
+		<type name="varchar" length="300"/>
+		<comment><![CDATA[Senha encriptada do usuário]]></comment>
+	</column>
+	<column name="created_at" not-null="true" default-value="now()">
+		<type name="timestamp"/>
+		<comment><![CDATA[Data em que o usuário foi criado]]></comment>
+	</column>
+	<column name="expired" not-null="true" default-value="false">
+		<type name="smallint"/>
+		<comment><![CDATA[Define se a conta do usuário está expirado ou não]]></comment>
+	</column>
+	<constraint name="pk_user" type="pk-constr" table="todolist.&quot;user&quot;">
+		<columns names="id" ref-type="src-columns"/>
+		<comment><![CDATA[Chave primária da tabela user]]></comment>
+	</constraint>
+	<constraint name="unique_email" type="uq-constr" table="todolist.&quot;user&quot;">
+		<columns names="email" ref-type="src-columns"/>
+		<comment><![CDATA[Define o e-mail único]]></comment>
+	</constraint>
+</table>
+
+<index name="index_email" table="todolist.&quot;user&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="email"/>
+		</idxelement>
+</index>
+
+<relationship name="project_has_many_task" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#f41d0e"
+	 src-table="todolist.project"
+	 dst-table="todolist.task"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="user_has_many_project" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#b3bdb4"
+	 src-table="todolist.&quot;user&quot;"
+	 dst-table="todolist.project"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>
